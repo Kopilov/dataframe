@@ -8,6 +8,14 @@ import org.jetbrains.kotlinx.dataframe.ColumnsContainer
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.DataRow
 import org.jetbrains.kotlinx.dataframe.RowExpression
+import org.jetbrains.kotlinx.dataframe.annotations.AddWithDsl
+import org.jetbrains.kotlinx.dataframe.annotations.Dsl
+import org.jetbrains.kotlinx.dataframe.annotations.From
+import org.jetbrains.kotlinx.dataframe.annotations.Name
+import org.jetbrains.kotlinx.dataframe.annotations.ReturnType
+import org.jetbrains.kotlinx.dataframe.annotations.SchemaMutation
+import org.jetbrains.kotlinx.dataframe.annotations.SchemaProcessor
+import org.jetbrains.kotlinx.dataframe.annotations.StartingSchema
 import org.jetbrains.kotlinx.dataframe.columns.ColumnAccessor
 import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
 import org.jetbrains.kotlinx.dataframe.columns.ColumnReference
@@ -32,10 +40,11 @@ internal class AddDataRowImpl<T>(index: Int, owner: DataFrame<T>, private val co
 
 public typealias AddExpression<T, C> = AddDataRow<T>.(AddDataRow<T>) -> C
 
+@SchemaMutation(startingSchema = StartingSchema.FULL)
 public inline fun <reified R, T> DataFrame<T>.add(
-    name: String,
+    @Name name:  String,
     infer: Infer = Infer.Nulls,
-    noinline expression: AddExpression<T, R>
+    @ReturnType noinline expression: AddExpression<T,  R>
 ): DataFrame<T> =
     (this + map(name, infer, expression))
 
@@ -63,7 +72,8 @@ public inline fun <reified R, T> DataFrame<T>.add(
     return insert(path, col)
 }
 
-public fun <T> DataFrame<T>.add(body: AddDsl<T>.() -> Unit): DataFrame<T> {
+@SchemaProcessor<AddWithDsl>(AddWithDsl::class)
+public fun <T> DataFrame<T>.add(@Dsl body: AddDsl<T>.() -> Unit): DataFrame<T> {
     val dsl = AddDsl(this)
     body(dsl)
     return dataFrameOf(this@add.columns() + dsl.columns).cast()
@@ -106,7 +116,8 @@ public class AddDsl<T>(@PublishedApi internal val df: DataFrame<T>) : ColumnsCon
 
     public inline infix fun <reified R> ColumnAccessor<R>.from(column: ColumnReference<R>): Boolean = name().from(column)
 
-    public inline infix fun <reified R> String.from(noinline expression: RowExpression<T, R>): Boolean = add(this, Infer.Nulls, expression)
+    @SchemaProcessor<From>(From::class)
+    public inline infix fun <reified R> @receiver:Name String.from(@ReturnType noinline expression: RowExpression<T, R>): Boolean = add(this, Infer.Nulls, expression)
 
     public infix fun String.from(column: Column): Boolean = add(column.rename(this))
 
