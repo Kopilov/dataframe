@@ -1,4 +1,4 @@
-import org.jetbrains.dataframe.gradle.DataSchemaVisibility.IMPLICIT_PUBLIC
+//import org.jetbrains.dataframe.gradle.DataSchemaVisibility.IMPLICIT_PUBLIC
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlinx.publisher.apache2
 import org.jetbrains.kotlinx.publisher.developer
@@ -10,8 +10,9 @@ plugins {
     kotlin("libs.publisher") version libs.versions.libsPublisher
     kotlin("plugin.serialization") version libs.versions.kotlin
     kotlin("jupyter.api") version libs.versions.kotlinJupyter
-    kotlin("plugin.dataframe") version libs.versions.dataframe
+//    kotlin("plugin.dataframe") version libs.versions.dataframe
 
+    id("com.google.devtools.ksp") version "1.6.20-1.0.5"
     id("org.jetbrains.dokka") version libs.versions.dokka
     id("org.jetbrains.dataframe.generator")
 
@@ -34,6 +35,10 @@ configurations {
     testImplementation.get().extendsFrom(compileOnly.get())
 }
 
+configurations.ksp.get().resolutionStrategy.dependencySubstitution {
+    substitute(project(":")).using(module("org.jetbrains.kotlinx:dataframe:0.8.0-dev-939")).because("...")
+}
+
 dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlin.stdlib.jdk8)
@@ -47,6 +52,7 @@ dependencies {
 
     implementation(libs.kotlin.datetimeJvm)
 
+    ksp("org.jetbrains.kotlinx.dataframe:symbol-processor:0.8.0-dev-939")
     implementation(libs.arrow.vector)
     implementation(libs.arrow.format)
     implementation(libs.arrow.memory)
@@ -246,11 +252,11 @@ kotlin.sourceSets {
     }
 }
 
-dataframes {
-    schema {
-        sourceSet = "test"
-        visibility = IMPLICIT_PUBLIC
-        data = "https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv"
-        name = "org.jetbrains.kotlinx.dataframe.samples.api.Repository"
-    }
-}
+//dataframes {
+//    schema {
+//        sourceSet = "test"
+//        visibility = IMPLICIT_PUBLIC
+//        data = "https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv"
+//        name = "org.jetbrains.kotlinx.dataframe.samples.api.Repository"
+//    }
+//}
