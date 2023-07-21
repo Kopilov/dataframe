@@ -10,6 +10,7 @@ import org.jetbrains.kotlinx.dataframe.alsoDebug
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 import org.jetbrains.kotlinx.dataframe.columns.ColumnKind
 import org.jetbrains.kotlinx.dataframe.exceptions.TypeConverterNotFoundException
+import org.jetbrains.kotlinx.dataframe.hasNulls
 import org.jetbrains.kotlinx.dataframe.kind
 import org.junit.Test
 import kotlin.reflect.typeOf
@@ -76,6 +77,12 @@ class ConvertToTests {
         val expected = dataFrameOf("a")(A(1), A(0))
 
         converted shouldBe expected
+    }
+
+    @Test
+    fun `cast nullable to not nulls`() {
+        val c = DataColumn.create("nullable", listOf("a" as String?, "b" as String?, "c" as String?))
+        c.hasNulls shouldBe false
     }
 
     @JvmInline

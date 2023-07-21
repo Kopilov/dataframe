@@ -18,6 +18,7 @@ import org.jetbrains.kotlinx.dataframe.api.convertToLocalTime
 import org.jetbrains.kotlinx.dataframe.api.parse
 import org.jetbrains.kotlinx.dataframe.api.parser
 import org.jetbrains.kotlinx.dataframe.api.plus
+import org.jetbrains.kotlinx.dataframe.api.setNullable
 import org.jetbrains.kotlinx.dataframe.api.times
 import org.jetbrains.kotlinx.dataframe.api.tryParse
 import org.jetbrains.kotlinx.dataframe.exceptions.TypeConversionException
@@ -152,9 +153,9 @@ class ParserTests {
             columnComma.convertTo<Double>().shouldBe(columnOf(12345.0, 67890.0))
             columnMixed.convertTo<Double>().shouldBe(columnOf(12.345, 67890.0))
 
-            columnDot.convertTo<Double?>().shouldBe(columnOf(12.345, 67.89))
-            columnComma.convertTo<Double?>().shouldBe(columnOf(12345.0, 67890.0))
-            columnMixed.convertTo<Double?>().shouldBe(columnOf(12.345, 67890.0))
+            columnDot.convertTo<Double?>().shouldBe(columnOf(12.345, 67.89).setNullable(true))
+            columnComma.convertTo<Double?>().shouldBe(columnOf(12345.0, 67890.0).setNullable(true))
+            columnMixed.convertTo<Double?>().shouldBe(columnOf(12.345, 67890.0).setNullable(true))
 
             columnDot.convertToDouble(parsingLocaleNotDefined).shouldBe(columnOf(12.345, 67.89))
             columnComma.convertToDouble(parsingLocaleNotDefined).shouldBe(columnOf(12345.0, 67890.0))
@@ -174,9 +175,9 @@ class ParserTests {
             columnComma.convertTo<Double>().shouldBe(columnOf(12345.0, 67890.0))
             columnMixed.convertTo<Double>().shouldBe(columnOf(12.345, 67890.0))
 
-            columnDot.convertTo<Double?>().shouldBe(columnOf(12.345, 67.89))
-            columnComma.convertTo<Double?>().shouldBe(columnOf(12345.0, 67890.0))
-            columnMixed.convertTo<Double?>().shouldBe(columnOf(12.345, 67890.0))
+            columnDot.convertTo<Double?>().shouldBe(columnOf(12.345, 67.89).setNullable(true))
+            columnComma.convertTo<Double?>().shouldBe(columnOf(12345.0, 67890.0).setNullable(true))
+            columnMixed.convertTo<Double?>().shouldBe(columnOf(12.345, 67890.0).setNullable(true))
 
             columnDot.convertToDouble(parsingLocaleNotDefined).shouldBe(columnOf(12.345, 67.89))
             columnComma.convertToDouble(parsingLocaleNotDefined).shouldBe(columnOf(12345.0, 67890.0))
@@ -196,9 +197,9 @@ class ParserTests {
             columnComma.convertTo<Double>().shouldBe(columnOf(12.345, 67.89))
             columnMixed.convertTo<Double>().shouldBe(columnOf(12.345, 67890.0))
 
-            columnDot.convertTo<Double?>().shouldBe(columnOf(12.345, 67.89))
-            columnComma.convertTo<Double?>().shouldBe(columnOf(12.345, 67.89))
-            columnMixed.convertTo<Double?>().shouldBe(columnOf(12.345, 67890.0))
+            columnDot.convertTo<Double?>().shouldBe(columnOf(12.345, 67.89).setNullable(true))
+            columnComma.convertTo<Double?>().shouldBe(columnOf(12.345, 67.89).setNullable(true))
+            columnMixed.convertTo<Double?>().shouldBe(columnOf(12.345, 67890.0).setNullable(true))
 
             columnDot.convertToDouble(parsingLocaleNotDefined).shouldBe(columnOf(12.345, 67.89))
             columnComma.convertToDouble(parsingLocaleNotDefined).shouldBe(columnOf(12.345, 67.89))
