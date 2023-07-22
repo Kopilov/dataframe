@@ -107,11 +107,14 @@ public fun <T, C> Convert<T, C>.to(columnConverter: DataFrame<T>.(DataColumn<C>)
 public inline fun <reified C> AnyCol.convertTo(): DataColumn<C> = convertTo(typeOf<C>()) as DataColumn<C>
 
 public fun AnyCol.convertTo(newType: KType): AnyCol {
-    val isTypesAreCorrect = this.type().withNullability(true)
+    val weAreParsingDoubles = this.type().withNullability(true)
         .isSubtypeOf(typeOf<String?>()) && newType.withNullability(true) == typeOf<Double?>()
 
-    if (isTypesAreCorrect) {
-        return (this as DataColumn<String?>).convertToDouble().setNullable(newType.isMarkedNullable)
+    if (weAreParsingDoubles) {
+        return (this as DataColumn<String?>)
+            .map { if (it.isNullOrBlank()) null else it }
+            .convertToDouble()
+            .setNullable(newType.isMarkedNullable)
     }
     return convertToTypeImpl(newType)
 }

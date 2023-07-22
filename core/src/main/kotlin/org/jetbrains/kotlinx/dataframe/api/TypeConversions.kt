@@ -26,7 +26,9 @@ import org.jetbrains.kotlinx.dataframe.impl.columns.asValues
 import org.jetbrains.kotlinx.dataframe.impl.columns.forceResolve
 import org.jetbrains.kotlinx.dataframe.impl.owner
 import org.jetbrains.kotlinx.dataframe.index
+import org.jetbrains.kotlinx.dataframe.type
 import kotlin.reflect.KProperty
+import kotlin.reflect.full.withNullability
 import kotlin.reflect.typeOf
 
 // region String
@@ -97,10 +99,11 @@ public fun <T> DataColumn<T>.castToNullable(): DataColumn<T?> = cast()
 public fun <T> ColumnReference<T>.castToNullable(): ColumnReference<T?> = cast()
 
 public fun AnyCol.setNullable(nullable: Boolean): AnyCol {
+    val convertInnerType = DataColumn.create(this.name, this.values().toList(), this.type.withNullability(nullable))
     return if (nullable) {
-        this.castToNullable()
+        convertInnerType.castToNullable()
     } else {
-        this.castToNotNullable()
+        convertInnerType.castToNotNullable()
     }
 }
 
