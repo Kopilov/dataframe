@@ -16,8 +16,7 @@ import org.apache.poi.ss.util.CellReference
 import org.apache.poi.util.DefaultTempFileCreationStrategy
 import org.apache.poi.util.LocaleUtil
 import org.apache.poi.util.LocaleUtil.getUserTimeZone
-import org.apache.poi.util.TempFile
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import org.jetbrains.kotlinx.dataframe.AnyFrame
 import org.jetbrains.kotlinx.dataframe.AnyRow
 import org.jetbrains.kotlinx.dataframe.ColumnsSelector
@@ -327,7 +326,7 @@ public fun <T> DataFrame<T>.writeExcel(
         }
 
         WorkBookType.XLSX -> {
-            { XSSFWorkbook() }
+            { SXSSFWorkbook() }
         }
     }
     return file.outputStream().use {
