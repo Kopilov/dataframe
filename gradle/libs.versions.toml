@@ -48,7 +48,7 @@ junit-platform = "1.10.2"
 kotestAsserions = "5.5.4"
 
 jsoup = "1.17.2"
-arrow = "15.0.0"
+arrow = "17.0.0"
 docProcessor = "0.3.10"
 simpleGit = "2.0.3"
 dependencyVersions = "0.51.0"

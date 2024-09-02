@@ -31,6 +31,8 @@ import org.apache.arrow.vector.UInt8Vector
 import org.apache.arrow.vector.VarBinaryVector
 import org.apache.arrow.vector.VarCharVector
 import org.apache.arrow.vector.VectorSchemaRoot
+import org.apache.arrow.vector.ViewVarBinaryVector
+import org.apache.arrow.vector.ViewVarCharVector
 import org.apache.arrow.vector.complex.StructVector
 import org.apache.arrow.vector.ipc.ArrowFileReader
 import org.apache.arrow.vector.ipc.ArrowReader
@@ -207,6 +209,25 @@ private fun VarCharVector.values(range: IntRange): List<String?> =
         }
     }
 
+private fun LargeVarCharVector.values(range: IntRange): List<String?> =
+    range.map {
+        if (isNull(it)) {
+            null
+        } else {
+            String(get(it))
+        }
+    }
+
+private fun ViewVarCharVector.values(range: IntRange): List<String?> =
+    range.map {
+        if (isNull(it)) {
+            null
+        } else {
+            String(get(it))
+        }
+    }
+
+
 private fun VarBinaryVector.values(range: IntRange): List<ByteArray?> =
     range.map {
         if (isNull(it)) {
@@ -225,12 +246,12 @@ private fun LargeVarBinaryVector.values(range: IntRange): List<ByteArray?> =
         }
     }
 
-private fun LargeVarCharVector.values(range: IntRange): List<String?> =
+private fun ViewVarBinaryVector.values(range: IntRange): List<ByteArray?> =
     range.map {
         if (isNull(it)) {
             null
         } else {
-            String(get(it))
+            get(it)
         }
     }
 
@@ -266,9 +287,13 @@ private fun readField(root: VectorSchemaRoot, field: Field, nullability: Nullabi
 
             is LargeVarCharVector -> vector.values(range).withTypeNullable(field.isNullable, nullability)
 
+            is ViewVarCharVector -> vector.values(range).withTypeNullable(field.isNullable, nullability)
+
             is VarBinaryVector -> vector.values(range).withTypeNullable(field.isNullable, nullability)
 
             is LargeVarBinaryVector -> vector.values(range).withTypeNullable(field.isNullable, nullability)
+
+            is ViewVarBinaryVector -> vector.values(range).withTypeNullable(field.isNullable, nullability)
 
             is BitVector -> vector.values(range).withTypeNullable(field.isNullable, nullability)
 
