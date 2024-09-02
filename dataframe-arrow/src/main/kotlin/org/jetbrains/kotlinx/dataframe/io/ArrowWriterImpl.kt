@@ -146,6 +146,16 @@ internal class ArrowWriterImpl(
         }
     }
 
+    private fun convertColumnToCompatible(column: AnyCol): Pair<AnyCol, Field> {
+        val actualField = column.toArrowField(mismatchSubscriber)
+        val result = try {
+            convertColumnToTarget(column, actualField.type)!!
+        } catch (e: Exception) {
+            column
+        }
+        return result to actualField
+    }
+
     private fun infillVector(vector: FieldVector, column: AnyCol) {
         when (vector) {
             is VarCharVector ->
@@ -307,7 +317,7 @@ internal class ArrowWriterImpl(
                         cause = e,
                     ),
                 )
-                column to column!!.toArrowField(mismatchSubscriber)
+                convertColumnToCompatible(column!!)
             }
         } catch (e: TypeConverterNotFoundException) {
             if (strictType) {
@@ -318,7 +328,7 @@ internal class ArrowWriterImpl(
             } else {
                 // If strictType is not enabled, use original data with its type. Target nullable is saved at this step.
                 mismatchSubscriber(ConvertingMismatch.TypeConversionNotFound.ConversionNotFoundIgnored(field.name, e))
-                column to column!!.toArrowField(mismatchSubscriber)
+                convertColumnToCompatible(column!!)
             }
         }
 
